@@ -1,0 +1,15 @@
+{
+  "name": "websocket",
+  "version": "1.0.0",
+  "description": "웹소캣 기능 구현",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "fcfargo",
+  "license": "MIT",
+  "dependencies": {
+    "nodemon": "^2.0.20",
+    "ws": "^8.8.1"
+  }
+}
