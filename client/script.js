@@ -17,6 +17,7 @@ $(document).ready(function () {
   $registeredUser.focus(); // giving the user name input field the cursor.
 
   /** 소켓 서버에 이벤트 데이터 전송하는 emit 메서드 정의
+   * emit 메서드란? - 클라이언트에서 소켓 서버로 이벤트 데이터를 전송하기 위해 사용하는 메서드
    * 서버 전달 데이터 형식
    * ex1) {"event":"updateUserStatus", "data": "green"}
    * ex2) {"event":"thisUser","data":{"user":"kd","onlineStatus":"green"}}
@@ -26,7 +27,9 @@ $(document).ready(function () {
     this.send(JSON.stringify({ event, data }));
   };
 
-  /** 소켓 서버에서 전송받은 이벤트 데이터의 리스너를 생성하는 listen 메서드 정의
+  /** 소켓 서버에서 전송받은 이벤트 데이터의 리스너를 등록하는 listen 메서드 정의
+   * listen 메서드란? - 소켓 서버에서 클라이언트로 전송된 이벤트 데이터를 처라히기 위한 리스너를 등록하기 위해 사용하는 메서드
+   * 리스터란? - 전달 받은 이벤트 데이터를 이벤트 유형에 맞게 처리하는 함수
    * ex) socket.listen('pizzaprepared', data => console.log(data))
    * --> 소켓 서버에서 전송받은 'pizzaprepared' 이벤트 데이터의 리스너를 등록
    * --> socket._socketListeners = { pizzaprepared : data => console.log(data) }
@@ -51,6 +54,7 @@ $(document).ready(function () {
       // 받아온 데이터(string or binary)를 JOSN 타입으로 파싱
       // 파싱한 데이터 구조분해 할당
       const { event, data } = JSON.parse(_event.data);
+      // 이벤트 리스너의 callback 함수를 실행
       socketClient._socketListeners[event](data);
     } catch (error) {
       // not for our app
@@ -148,7 +152,7 @@ $(document).ready(function () {
     });
   });
 
-  /* SECTION - 소켓 서버에서 전송받은 유저 메시지(newMessage) 이벤트 데이터의 리스너 등록 */
+  /* SECTION - 소켓 서버에서 전송받은 '유저 메시지(newMessage) 이벤트 데이터'의 리스너 등록 */
   socketClient.listen('newMessage', function (data) {
     let prevOffsetTop = 0,
       currOffsetTop = 0;
@@ -201,7 +205,7 @@ $(document).ready(function () {
     socketClient.emit('updateUserStatus', 'green');
     return;
   });
-  /* SECTION - showing online users */
+  /* SECTION - 소켓 서버에서 전송받은 '온라인 유저(all-Users) 이벤트 데이터'의 리스너 등록 */
   socketClient.listen('all-Users', function (obj) {
     let html = '';
     let imgSrc = ''; // variable to store the source of either "Yellow dot" or "Green dot" (for Online/Away symbol).
@@ -217,7 +221,7 @@ $(document).ready(function () {
     $users.empty();
     $users.append(html);
   });
-  /* SECTION - showing typing users */
+  /* SECTION - showing typing users 소켓 서버에서 전송받은 '메시지 타이핑 실행 중인 모든 유저(showTypingUsers) 이벤트 데이터'의 리스너 등록 */
   socketClient.listen('showTypingUsers', function (data) {
     let str = ''; // will store the names of users currently typing. (If their no. is less than 3)
     var cnt = 0; // variable that stores the number of people currently typing other than the current user.
