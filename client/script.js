@@ -1,5 +1,5 @@
 // 포트 번호 이후에 입력하는 주소에 상관 없이 웹소켓 서버로 연결된다.
-const server = new WebSocket('ws://localhost:8006/websocket');
+const server = new WebSocket('ws://localhost:8005/websocket');
 
 const message = document.getElementById('messages');
 const input = document.getElementById('message');
