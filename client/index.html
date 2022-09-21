@@ -1,15 +1,123 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width =device-width,initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <meta charset="UTF-8">
+    <title>CHAT APP</title>
+<style>
+div#chats {
+    min-height: 300px;
+}
+</style>
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+    <!-- jquery emoji picker -->
+    <link rel="stylesheet" type="text/css" href="css/jquery.emojipicker.css">
+
+    <!-- Jquery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <!-- Emoji Data -->
+    <link rel="stylesheet" type="text/css" href="css/jquery.emojipicker.tw.css">
+
+    <!-- Latest compiled and minified JavaScript 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    -->
+
+    <style>
+      body {
+        margin-left: 20px;
+        margin-top: 30px;
+        background: url('https://cdn.dribbble.com/users/74401/screenshots/1645509/astronaut.png') no-repeat center center fixed;
+        background-size: 100% 100%;
+      }
+      .chat-section {
+        display: none;
+      }
+      #noMsgErr {
+        display: none;
+      }
+      h1, h2 {
+        color: darkgray;
+      }
+    </style>
   </head>
+
+
+
   <body>
-    <div id="messages"></div>
-    <input id="message" />
-    <button id="send">Send Message</button>
-    <script src="script.js"></script>
+
+    <!-- User Registration Form. To be displayed only for the first time. -->
+    <div class="container-fluid">
+      <div id="userRegistration">
+        <h2>Register Yourself First!</h2>
+
+        <div class="row">
+          <div class="col-md-11">
+            <div class="well">
+              <label>Enter username: </label>
+              <input type="text" class="form-control" placeholder="Enter user name" id="registeredUser"
+                    onkeydown="if(event.keyCode == 13) { $('#regUserSubmitBtn').click();}"/>
+                <br>
+              <button type="button" class="btn btn-default btn-success" id="regUserSubmitBtn"> SUBMIT </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <div class="chat-section">
+        <h1 class="text-center">Let's Chat!</h1>
+        <div class="row">
+            <div class="col-md-3 col-md-offset-0"  id='onlineUsersSection'>
+              <div class="well">
+                <label>Online Users:</label><br>
+                <ul id="users"></ul>
+              </div>
+            </div>
+
+          <div class="col-md-8 chatDiv">
+            <div id="chats"></div>
+
+            <div class="well" id="typeMsgSection">
+              <label for="Chats" class='peopleTyping'>Type Message: </label>
+
+              <br/>
+              <input type="text" placeholder="enter message" id="sentMessage" class="form-control"
+                      onkeydown="if(event.keyCode == 13) {$('#hitSend').click();}"></input>
+              <br/>
+
+              <div class="alert alert-danger" id="noMsgErr">
+                <p>Blank Messsages are not entertained</p>
+              </div>
+
+              <br/>
+              <div class="row">
+                <div class="col-md-10">
+                  <button class="btn btn-block btn-primary" id="hitSend">Send</button>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-warning" id="clearChat">Clear Chat</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
   </body>
+
+  <script src="script.js"></script>
+
+<!-- jquery emoji picker -->
+<script type="text/javascript" src="js/jquery.emojipicker.js"></script>
+<script type="text/javascript" src="js/jquery.emojis.js"></script>
+
 </html>

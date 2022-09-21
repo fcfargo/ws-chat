@@ -1,7 +1,7 @@
-const { WebSocketServer } = require('ws');
 const express = require('express');
 const app = express();
 const path = require('path');
+const WebSocket = require('ws');
 
 require('dotenv').config();
 app.use('/', express.static(path.resolve(__dirname, '../client')));
@@ -13,7 +13,7 @@ const server = app.listen(port, () => {
 
 // 통신 프로토콜이 http일 경우 express 서버 사용
 // 통신 프로토콜이 ws일 경우 websocket 서버 사용
-const wss = new WebSocketServer({
+const wss = new WebSocket.Server({
   noServer: true,
   // return false 인 경우 인증되지 않은 사용자는 웹소켓 연결 불가능해진다. 하지만 실제로 verifyClient 대신 handleupgrade method 사용이 권장된다.
   // verifyClient: (info) => {
@@ -46,10 +46,10 @@ server.on('upgrade', async function upgrade(request, socket, head) {
   // verfiyClient() 기능처럼 사용자 인증을 처리할 수 있다.
   // return false 인 경우 사용자 웹소켓 연결 불가능
   // return false 인 경우 웹소켓 서버 연결 상태는 CLOSED가 아닌 pending이기 때문에, 웹소켓 서버 연결을 종료하려면 return socket.end()로 처리해야 한다.
-  if (Math.random() > 0.5) {
-    socket.destroy();
-    return;
-  }
+  // if (Math.random() > 0.5) {
+  //   socket.destroy();
+  //   return;
+  // }
 
   // 웹소켓 서버 실행
   wss.handleUpgrade(request, socket, head, function done(ws) {
