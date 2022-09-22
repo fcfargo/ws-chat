@@ -62,8 +62,8 @@ $(document).ready(function () {
   };
 
   /**  SECTION - 유저 메시지 타이핑 이벤트
-   * 유저 메시지 타이핑 실행 이벤트 소켓 서버에 전송
-   * 유저 메시지 타이핑 중단 이벤트 소켓 서버에 전송
+   * '유저 메시지 타이핑 실행 이벤트' 소켓 서버에 전송
+   * '유저 메시지 타이핑 중단 이벤트' 소켓 서버에 전송
    */
   $sentMessage.on('keyup', function () {
     if ($(this).val()) {
@@ -82,7 +82,7 @@ $(document).ready(function () {
     }
   });
   /** SECTION - 유저 메시지 전송 버튼 클릭 이벤트
-   * 유저 메시지 데이터(oldMessage) 이벤트 소켓 서버에 전송
+   * '유저 메시지 데이터(oldMessage) 이벤트' 소켓 서버에 전송
    */
   $hitSend.on('click', function (event) {
     event.preventDefault();
@@ -123,7 +123,7 @@ $(document).ready(function () {
     $('.peopleTyping').text('Type Message:  ');
   });
   /** SECTION - 이벤트 리스터
-   * 유저 정보(이름, 온라인 상태) 데이터 이벤트 소켓 서버에 전송
+   * '유저 정보(이름, 온라인 상태) 데이터 이벤트 소켓' 서버에 전송
    */
   $regUserSubmitBtn.on('click', function () {
     window.currentUser = $registeredUser.val();
@@ -221,7 +221,7 @@ $(document).ready(function () {
     $users.empty();
     $users.append(html);
   });
-  /* SECTION - showing typing users 소켓 서버에서 전송받은 '메시지 타이핑 실행 중인 모든 유저(showTypingUsers) 이벤트 데이터'의 리스너 등록 */
+  /* SECTION - 소켓 서버에서 전송받은 '메시지 타이핑 실행 중인 모든 유저(showTypingUsers) 이벤트 데이터'의 리스너 등록 */
   socketClient.listen('showTypingUsers', function (data) {
     let str = ''; // will store the names of users currently typing. (If their no. is less than 3)
     var cnt = 0; // variable that stores the number of people currently typing other than the current user.

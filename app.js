@@ -18,18 +18,56 @@ const wss = new WebSocket.Server({
   noServer: true,
 });
 
+const allClients = [];
 const typingUsers = [];
-
 const messages = [];
+
+/** 접속 중인 모든 클라이언트에게 '새로운 메시지 데이터(newMessage) 이벤트' 를 전송*/
+function broadcastNewMessage(user, msg) {
+  allClients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          event: 'newMessage',
+          data: {
+            user,
+            msg,
+          },
+        }),
+      );
+    }
+  });
+}
+
+/** 접속 중인 모든 클라이언트에게 '접속 중인 모든 유저 데이터(all-Users) 이벤트' 를 전송*/
+function updateAllUsers() {
+  allClients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN)
+      client.send(
+        JSON.stringify({
+          event: 'all-Users',
+          data: allClients.map((user) => ({
+            status: user.info.onlineStatus,
+            user: user.info.user,
+          })),
+        }),
+      );
+  });
+}
 
 // wss: WebSocketServer(Class)
 // ws: WebSocket(Class)
 // 웹소켓 서버에 연결될 때마다 callback 함수 실행
 wss.on('connection', (ws) => {
+  ws.info = {
+    user: '',
+    onlineStatus: 'green',
+    messages: [],
+  };
   // 웹소켓 서버에 메시지가 전송될 때마다 callback 함수 실행
-  ws.on('message', (data) => {
+  ws.on('message', (message) => {
     try {
-      const { event, data } = JSON.parse(data);
+      const { event, data } = JSON.parse(message);
 
       // 조건을 여러개 설정할 경우 if 대신 swtich 활용 권장
       // 클라이언트에서 전송하는 이벤트 유형 별 처리
@@ -46,15 +84,18 @@ wss.on('connection', (ws) => {
           break;
         }
         case 'oldMessage': {
-          messages.push(data.msg);
+          messages.push({ contents: data.msg, user: ws.info.user });
+          broadcastNewMessage(ws.info.user, data.msg);
           break;
         }
         case 'thisUser': {
-          ws.__userDetails = data;
+          ws.info = data;
+          allClients.push(ws);
+          updateAllUsers();
           break;
         }
         case 'updateUserStatus': {
-          ws.__userDetails.onlineStatus = data;
+          ws.info.onlineStatus = data;
           break;
         }
       }
@@ -66,14 +107,6 @@ wss.on('connection', (ws) => {
 
 // express 서버(hhtp) 연결 업그레이드
 server.on('upgrade', async function upgrade(request, socket, head) {
-  // verfiyClient() 기능처럼 사용자 인증을 처리할 수 있다.
-  // return false 인 경우 사용자 웹소켓 연결 불가능
-  // return false 인 경우 웹소켓 서버 연결 상태는 CLOSED가 아닌 pending이기 때문에, 웹소켓 서버 연결을 종료하려면 return socket.end()로 처리해야 한다.
-  // if (Math.random() > 0.5) {
-  //   socket.destroy();
-  //   return;
-  // }
-
   // 웹소켓 서버 실행
   wss.handleUpgrade(request, socket, head, function done(ws) {
     wss.emit('connection', ws, request, head);
