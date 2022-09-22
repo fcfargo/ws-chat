@@ -1,4 +1,5 @@
 const express = require('express');
+const { join } = require('path');
 const app = express();
 const path = require('path');
 const WebSocket = require('ws');
@@ -15,29 +16,51 @@ const server = app.listen(port, () => {
 // 통신 프로토콜이 ws일 경우 websocket 서버 사용
 const wss = new WebSocket.Server({
   noServer: true,
-  // return false 인 경우 인증되지 않은 사용자는 웹소켓 연결 불가능해진다. 하지만 실제로 verifyClient 대신 handleupgrade method 사용이 권장된다.
-  // verifyClient: (info) => {
-  //   return true;
-  // },
 });
 
-// 웹소켓 서버에 연결된 사용자를 저장하는 배열
-const clients = [];
+const typingUsers = [];
 
+const messages = [];
+
+// wss: WebSocketServer(Class)
+// ws: WebSocket(Class)
 // 웹소켓 서버에 연결될 때마다 callback 함수 실행
 wss.on('connection', (ws) => {
-  clients.push(ws);
   // 웹소켓 서버에 메시지가 전송될 때마다 callback 함수 실행
-  // broadcasting
   ws.on('message', (data) => {
-    clients.forEach((client) => {
-      // readyState: 웹소켓의 상태를 의미한다.
-      // 웹 소켓의 상태는 4가지다.(OPEN: 상태 번호 1, CLOSED: 상태 번호 3, CONNECTING: 상태 번호 0, CLOSING: 상태 번호 2)
-      // 사용자의 웹소켓 서버 연결 상태가 OPEN(VALID CONNECTION)인지를 확인하는 조건문
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(data.toString());
+    try {
+      const { event, data } = JSON.parse(data);
+
+      // 조건을 여러개 설정할 경우 if 대신 swtich 활용 권장
+      // 클라이언트에서 전송하는 이벤트 유형 별 처리
+      switch (event) {
+        case 'addTypingUsers': {
+          typingUsers.push(ws);
+          break;
+        }
+        case 'removeTypingUsers': {
+          const userIdx = typingUsers.findIndex((user) => user === ws);
+          if (userIdx !== -1) {
+            typingUsers.splice(userIdx, 1);
+          }
+          break;
+        }
+        case 'oldMessage': {
+          messages.push(data.msg);
+          break;
+        }
+        case 'thisUser': {
+          ws.__userDetails = data;
+          break;
+        }
+        case 'updateUserStatus': {
+          ws.__userDetails.onlineStatus = data;
+          break;
+        }
       }
-    });
+    } catch (error) {
+      // not expected
+    }
   });
 });
 

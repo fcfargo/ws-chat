@@ -29,7 +29,7 @@ $(document).ready(function () {
 
   /** 소켓 서버에서 전송받은 이벤트 데이터의 리스너를 등록하는 listen 메서드 정의
    * listen 메서드란? - 소켓 서버에서 클라이언트로 전송된 이벤트 데이터를 처라히기 위한 리스너를 등록하기 위해 사용하는 메서드
-   * 리스터란? - 전달 받은 이벤트 데이터를 이벤트 유형에 맞게 처리하는 함수
+   * 리스너란(listener)? - 전달 받은 이벤트 데이터를 이벤트 유형에 맞게 처리하도록 도와주는 함수
    * ex) socket.listen('pizzaprepared', data => console.log(data))
    * --> 소켓 서버에서 전송받은 'pizzaprepared' 이벤트 데이터의 리스너를 등록
    * --> socket._socketListeners = { pizzaprepared : data => console.log(data) }
