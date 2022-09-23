@@ -1,5 +1,4 @@
 const express = require('express');
-const { join } = require('path');
 const app = express();
 const path = require('path');
 const WebSocket = require('ws');
@@ -55,6 +54,22 @@ function updateAllUsers() {
   });
 }
 
+/** 접속 중인 모든 클라이언트에게 '메시지 타이핑 실행 중인 모든 유저(showTypingUsers) 이벤트 데이터'를 전송*/
+function broadcastTypingUsers() {
+  allClients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          event: 'showTypingUsers',
+          data: typingUsers.map((userWS) => ({
+            user: userWS.info.user,
+          })),
+        }),
+      );
+    }
+  });
+}
+
 // wss: WebSocketServer(Class)
 // ws: WebSocket(Class)
 // 웹소켓 서버에 연결될 때마다 callback 함수 실행
@@ -74,6 +89,7 @@ wss.on('connection', (ws) => {
       switch (event) {
         case 'addTypingUsers': {
           typingUsers.push(ws);
+          broadcastTypingUsers();
           break;
         }
         case 'removeTypingUsers': {
@@ -81,6 +97,7 @@ wss.on('connection', (ws) => {
           if (userIdx !== -1) {
             typingUsers.splice(userIdx, 1);
           }
+          broadcastTypingUsers();
           break;
         }
         case 'oldMessage': {
@@ -96,6 +113,7 @@ wss.on('connection', (ws) => {
         }
         case 'updateUserStatus': {
           ws.info.onlineStatus = data;
+          updateAllUsers();
           break;
         }
       }
