@@ -4,7 +4,7 @@ const path = require('path');
 const WebSocket = require('ws');
 
 require('dotenv').config();
-app.use('/', express.static(path.resolve(__dirname, '../client')));
+app.use(express.static(__dirname + '/client'));
 
 const port = process.env.PORT;
 const server = app.listen(port, () => {
