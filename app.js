@@ -70,8 +70,8 @@ function broadcastTypingUsers() {
   });
 }
 
-// wss: WebSocketServer(Class)
-// ws: WebSocket(Class)
+// wss: WebSocketServer(Class), 웹 소켓 서버 객체
+// ws: WebSocket(Class), 클라이언트 객체
 // 웹소켓 서버에 연결될 때마다 callback 함수 실행
 wss.on('connection', (ws) => {
   ws.info = {
